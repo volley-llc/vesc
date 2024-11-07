@@ -278,7 +278,6 @@ static bool store_eeprom_var(eeprom_var *v, int address, uint16_t base) {
  * A pointer to a app_configuration struct to write the read configuration to.
  */
 void conf_general_read_app_configuration(app_configuration *conf) {
-	bool is_ok = true;
 	uint8_t *conf_addr = (uint8_t*)conf;
 	uint16_t var;
 
@@ -286,9 +285,6 @@ void conf_general_read_app_configuration(app_configuration *conf) {
 		if (EE_ReadVariable(EEPROM_BASE_APPCONF + i, &var) == 0) {
 			conf_addr[2 * i] = (var >> 8) & 0xFF;
 			conf_addr[2 * i + 1] = var & 0xFF;
-		} else {
-			is_ok = false;
-			break;
 		}
 	}
 
@@ -297,7 +293,6 @@ void conf_general_read_app_configuration(app_configuration *conf) {
 	conf->crc++;
 #endif
 	if(conf->crc != app_calc_crc(conf)) {
-		is_ok = false;
 //		mc_interface_fault_stop(FAULT_CODE_FLASH_CORRUPTION_APP_CFG, false, false);
 		fault_data f;
 		f.fault = FAULT_CODE_FLASH_CORRUPTION_APP_CFG;
@@ -305,9 +300,9 @@ void conf_general_read_app_configuration(app_configuration *conf) {
 	}
 
 	// Set the default configuration
-	if (!is_ok) {
-		confgenerator_set_defaults_appconf(conf);
-	}
+	confgenerator_set_defaults_appconf(conf);
+	// Set controller ID based on HW ID resistors
+	hw_init_app_config(conf);
 }
 
 /**
@@ -389,7 +384,6 @@ bool conf_general_store_app_configuration(app_configuration *conf) {
  * A pointer to a mc_configuration struct to write the read configuration to.
  */
 void conf_general_read_mc_configuration(mc_configuration *conf, bool is_motor_2) {
-	bool is_ok = true;
 	uint8_t *conf_addr = (uint8_t*)conf;
 	uint16_t var;
 	unsigned int base = is_motor_2 ? EEPROM_BASE_MCCONF_2 : EEPROM_BASE_MCCONF;
@@ -398,9 +392,6 @@ void conf_general_read_mc_configuration(mc_configuration *conf, bool is_motor_2)
 		if (EE_ReadVariable(base + i, &var) == 0) {
 			conf_addr[2 * i] = (var >> 8) & 0xFF;
 			conf_addr[2 * i + 1] = var & 0xFF;
-		} else {
-			is_ok = false;
-			break;
 		}
 	}
 
@@ -409,16 +400,16 @@ void conf_general_read_mc_configuration(mc_configuration *conf, bool is_motor_2)
 	conf->crc++;
 #endif
 	if(conf->crc != mc_interface_calc_crc(conf, is_motor_2)) {
-		is_ok = false;
 //		mc_interface_fault_stop(FAULT_CODE_FLASH_CORRUPTION_MC_CFG, is_motor_2, false);
 		fault_data f;
 		f.fault = FAULT_CODE_FLASH_CORRUPTION_MC_CFG;
 		terminal_add_fault_data(&f);
 	}
 
-	if (!is_ok) {
-		confgenerator_set_defaults_mcconf(conf);
-	}
+	// Set Default Motor Configuration
+	confgenerator_set_defaults_mcconf(conf);
+	// Set motor direction based on HW ID
+	hw_init_mc_config(conf);
 }
 
 /**
