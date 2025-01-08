@@ -810,6 +810,19 @@ void comm_can_shutdown(uint8_t controller_id)
                                   send_index, true);
 }
 
+void comm_can_ident(uint8_t controller_id)
+{
+    // data[7]: major
+    // data[6]: minor
+    // data[5..2]: feature flags
+    // data[1]: reserved
+    // data[0]: reserved
+    static const uint8_t buffer[8] = {
+        FW_VERSION_MAJOR, FW_VERSION_MINOR, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+
+    comm_can_transmit_eid_replace(controller_id | ((uint32_t)(CAN_IDENT) << 8), buffer, 0, true);
+}
+
 /**
  * Get status message by index.
  *
@@ -1271,9 +1284,15 @@ void comm_can_send_status5(uint8_t id, bool replace)
                         &send_index);
     // Tick count incremented each time this message is sent. Initialized to zero.
     // Allows controller on CAN bus to detect when a VESC has rebooted.
-    buffer_append_int16(buffer, tick_count++, &send_index);
+    buffer_append_int16(buffer, tick_count, &send_index);
     comm_can_transmit_eid_replace(id | ((uint32_t)CAN_PACKET_STATUS_5 << 8), buffer, send_index,
                                   replace);
+    // if wrapping, don't roll-over to 0, instead roll over halfway in range. This will allow
+    // controller to differentiate between roll-over and a restart/reboot.
+    if (tick_count == 0xFFFF)
+        tick_count = 0x8000;
+    else
+        tick_count++;
 }
 
 #if CAN_ENABLE
@@ -1890,6 +1909,10 @@ static void decode_msg(uint32_t eid, uint8_t* data8, int len, bool is_replaced)
                                           encoder_ts5700n8501_get_raw_status(), 8, true);
         }
         break;
+
+        case CAN_HELLO:
+            comm_can_ident(app_get_configuration()->controller_id);
+            break;
 
         case CAN_PACKET_CONF_BATTERY_CUT:
         case CAN_PACKET_CONF_STORE_BATTERY_CUT: {
