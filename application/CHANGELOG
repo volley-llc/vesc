@@ -1,3 +1,8 @@
+=== FW 5.04 ===
+* Add Hello/Ident CAN message pair. Allows CAN controller to identify version of VESC firmware and features available.
+* Update CAN STATUS_5 message to include 16-bit tick count variable so controller can detect reboots/restarts.
+* Flash Green LED for two seconds at startup so reboot/restarts can be visually identified.
+
 === FW 5.03 ===
 * Fixed inductance measurement bug.
 * Speed tracker windup protection.
