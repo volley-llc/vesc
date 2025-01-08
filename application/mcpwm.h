@@ -1,9 +1,9 @@
 /*
-	Copyright 2016 Benjamin Vedder	benjamin@vedder.se
+    Copyright 2016 Benjamin Vedder	benjamin@vedder.se
 
-	This file is part of the VESC firmware.
+    This file is part of the VESC firmware.
 
-	The VESC firmware is free software: you can redistribute it and/or modify
+    The VESC firmware is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
@@ -23,11 +23,11 @@
 #include "conf_general.h"
 
 // Functions
-void mcpwm_init(volatile mc_configuration *configuration);
+void mcpwm_init(volatile mc_configuration* configuration);
 void mcpwm_deinit(void);
 bool mcpwm_init_done(void);
-void mcpwm_set_configuration(volatile mc_configuration *configuration);
-void mcpwm_init_hall_table(int8_t *table);
+void mcpwm_set_configuration(volatile mc_configuration* configuration);
+void mcpwm_init_hall_table(int8_t* table);
 void mcpwm_set_duty(float dutyCycle);
 void mcpwm_set_duty_noramp(float dutyCycle);
 void mcpwm_set_pid_speed(float rpm);
@@ -57,7 +57,7 @@ float mcpwm_get_tot_current_in_filtered(void);
 void mcpwm_set_detect(void);
 float mcpwm_get_detect_pos(void);
 void mcpwm_reset_hall_detect_table(void);
-int mcpwm_get_hall_detect_result(int8_t *table);
+int mcpwm_get_hall_detect_result(int8_t* table);
 int mcpwm_read_hall_phase(void);
 float mcpwm_read_reset_avg_cycle_integrator(void);
 void mcpwm_set_comm_mode(mc_comm_mode mode);
@@ -73,7 +73,7 @@ void drv8323s_dccal_off(void);
 
 // Interrupt handlers
 void mcpwm_adc_inj_int_handler(void);
-void mcpwm_adc_int_handler(void *p, uint32_t flags);
+void mcpwm_adc_int_handler(void* p, uint32_t flags);
 
 // External variables
 extern volatile float mcpwm_detect_currents[];
@@ -84,11 +84,13 @@ extern volatile int mcpwm_vzero;
 /*
  * Fixed parameters
  */
-#define MCPWM_RPM_TIMER_FREQ			1000000.0	// Frequency of the RPM measurement timer
-#define MCPWM_CMD_STOP_TIME				0		// Ignore commands for this duration in msec after a stop has been sent
-#define MCPWM_DETECT_STOP_TIME			500		// Ignore commands for this duration in msec after a detect command
+#define MCPWM_RPM_TIMER_FREQ 1000000.0 // Frequency of the RPM measurement timer
+#define MCPWM_CMD_STOP_TIME                                                                        \
+    0 // Ignore commands for this duration in msec after a stop has been sent
+#define MCPWM_DETECT_STOP_TIME                                                                     \
+    500 // Ignore commands for this duration in msec after a detect command
 
 // Speed PID parameters
-#define MCPWM_PID_TIME_K				0.001	// Pid controller sample time in seconds
+#define MCPWM_PID_TIME_K 0.001 // Pid controller sample time in seconds
 
 #endif /* MC_PWM_H_ */

@@ -1,9 +1,9 @@
 /*
-	Copyright 2016 - 2021 Benjamin Vedder	benjamin@vedder.se
+    Copyright 2016 - 2021 Benjamin Vedder	benjamin@vedder.se
 
-	This file is part of the VESC firmware.
+    This file is part of the VESC firmware.
 
-	The VESC firmware is free software: you can redistribute it and/or modify
+    The VESC firmware is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
@@ -25,11 +25,11 @@
 // Functions
 uint16_t flash_helper_erase_new_app(uint32_t new_app_size);
 uint16_t flash_helper_erase_bootloader(void);
-uint16_t flash_helper_write_new_app_data(uint32_t offset, uint8_t *data, uint32_t len);
+uint16_t flash_helper_write_new_app_data(uint32_t offset, uint8_t* data, uint32_t len);
 
 uint16_t flash_helper_erase_qmlui(void);
-uint16_t flash_helper_write_qmlui(uint32_t offset, uint8_t *data, uint32_t len);
-uint8_t *flash_helper_qmlui_data(void);
+uint16_t flash_helper_write_qmlui(uint32_t offset, uint8_t* data, uint32_t len);
+uint8_t* flash_helper_qmlui_data(void);
 uint32_t flash_helper_qmlui_size(void);
 uint16_t flash_helper_qmlui_flags(void);
 

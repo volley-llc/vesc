@@ -1,9 +1,9 @@
 /*
-	Copyright 2018 Benjamin Vedder	benjamin@vedder.se
+    Copyright 2018 Benjamin Vedder	benjamin@vedder.se
 
-	This file is part of the VESC firmware.
+    This file is part of the VESC firmware.
 
-	The VESC firmware is free software: you can redistribute it and/or modify
+    The VESC firmware is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
@@ -23,14 +23,14 @@
 #include "conf_general.h"
 
 // Functions
-void gpdrive_init(volatile mc_configuration *configuration);
+void gpdrive_init(volatile mc_configuration* configuration);
 void gpdrive_deinit(void);
 bool gpdrive_init_done(void);
 bool gpdrive_is_dccal_done(void);
 float gpdrive_get_switching_frequency_now(void);
-void gpdrive_set_configuration(volatile mc_configuration *configuration);
+void gpdrive_set_configuration(volatile mc_configuration* configuration);
 void gpdrive_output_sample(float sample);
-void gpdrive_fill_buffer(float *samples, int sample_num);
+void gpdrive_fill_buffer(float* samples, int sample_num);
 void gpdrive_add_buffer_sample(float sample);
 void gpdrive_add_buffer_sample_int(int sample);
 void gpdrive_set_buffer_int_scale(float scale);

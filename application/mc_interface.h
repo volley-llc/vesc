@@ -1,9 +1,9 @@
 /*
-	Copyright 2016 Benjamin Vedder	benjamin@vedder.se
+    Copyright 2016 Benjamin Vedder	benjamin@vedder.se
 
-	This file is part of the VESC firmware.
+    This file is part of the VESC firmware.
 
-	The VESC firmware is free software: you can redistribute it and/or modify
+    The VESC firmware is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
@@ -29,7 +29,7 @@ int mc_interface_motor_now(void);
 void mc_interface_select_motor_thread(int motor);
 int mc_interface_get_motor_thread(void);
 const volatile mc_configuration* mc_interface_get_configuration(void);
-void mc_interface_set_configuration(mc_configuration *configuration);
+void mc_interface_set_configuration(mc_configuration* configuration);
 unsigned mc_interface_calc_crc(mc_configuration* conf, bool is_motor_2);
 bool mc_interface_dccal_done(void);
 void mc_interface_set_pwm_callback(void (*p_func)(void));
@@ -82,10 +82,11 @@ float mc_interface_get_pid_pos_set(void);
 float mc_interface_get_pid_pos_now(void);
 void mc_interface_update_pid_pos_offset(float angle_now, bool store);
 float mc_interface_get_last_sample_adc_isr_duration(void);
-void mc_interface_sample_print_data(debug_sampling_mode mode, uint16_t len, uint8_t decimation, bool raw);
+void mc_interface_sample_print_data(debug_sampling_mode mode, uint16_t len, uint8_t decimation,
+                                    bool raw);
 float mc_interface_temp_fet_filtered(void);
 float mc_interface_temp_motor_filtered(void);
-float mc_interface_get_battery_level(float *wh_left);
+float mc_interface_get_battery_level(float* wh_left);
 float mc_interface_get_speed(void);
 float mc_interface_get_distance(void);
 float mc_interface_get_distance_abs(void);
@@ -129,8 +130,7 @@ extern volatile float ADC_curr_norm_value[];
 
 // Common fixed parameters
 #ifndef HW_DEAD_TIME_NSEC
-#define HW_DEAD_TIME_NSEC				360.0	// Dead time
+#define HW_DEAD_TIME_NSEC 360.0 // Dead time
 #endif
-
 
 #endif /* MC_INTERFACE_H_ */

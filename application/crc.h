@@ -1,9 +1,9 @@
 /*
-	Copyright 2016 Benjamin Vedder	benjamin@vedder.se
+    Copyright 2016 Benjamin Vedder	benjamin@vedder.se
 
-	This file is part of the VESC firmware.
+    This file is part of the VESC firmware.
 
-	The VESC firmware is free software: you can redistribute it and/or modify
+    The VESC firmware is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
@@ -25,8 +25,8 @@
 /*
  * Functions
  */
-unsigned short crc16(unsigned char *buf, unsigned int len);
-uint32_t crc32(uint32_t *buf, uint32_t len);
+unsigned short crc16(unsigned char* buf, unsigned int len);
+uint32_t crc32(uint32_t* buf, uint32_t len);
 void crc32_reset(void);
 
 #endif /* CRC_H_ */

@@ -1,9 +1,9 @@
 /*
-	Copyright 2020 Benjamin Vedder	benjamin@vedder.se
+    Copyright 2020 Benjamin Vedder	benjamin@vedder.se
 
-	This file is part of the VESC firmware.
+    This file is part of the VESC firmware.
 
-	The VESC firmware is free software: you can redistribute it and/or modify
+    The VESC firmware is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
@@ -20,14 +20,16 @@
 #include "mempools.h"
 
 // Private types
-typedef struct {
-	volatile bool is_taken;
-	mc_configuration conf;
+typedef struct
+{
+    volatile bool is_taken;
+    mc_configuration conf;
 } mcconf_container_t;
 
-typedef struct {
-	volatile bool is_taken;
-	app_configuration conf;
+typedef struct
+{
+    volatile bool is_taken;
+    app_configuration conf;
 } appconf_container_t;
 
 // Private variables
@@ -36,81 +38,102 @@ static appconf_container_t m_app_confs[MEMPOOLS_APPCONF_NUM] = {{0}};
 static int m_mcconf_highest = 0;
 static int m_appconf_highest = 0;
 
-mc_configuration *mempools_alloc_mcconf(void) {
-	for (int i = 0;i < MEMPOOLS_MCCONF_NUM;i++) {
-		if (i > m_mcconf_highest) {
-			m_mcconf_highest = i;
-		}
-		if (!m_mc_confs[i].is_taken) {
-			m_mc_confs[i].is_taken = true;
-			return &m_mc_confs[i].conf;
-		}
-	}
+mc_configuration* mempools_alloc_mcconf(void)
+{
+    for (int i = 0; i < MEMPOOLS_MCCONF_NUM; i++)
+    {
+        if (i > m_mcconf_highest)
+        {
+            m_mcconf_highest = i;
+        }
+        if (!m_mc_confs[i].is_taken)
+        {
+            m_mc_confs[i].is_taken = true;
+            return &m_mc_confs[i].conf;
+        }
+    }
 
-	m_mcconf_highest++;
+    m_mcconf_highest++;
 
-	return 0;
+    return 0;
 }
 
-void mempools_free_mcconf(mc_configuration *conf) {
-	for (int i = 0;i < MEMPOOLS_MCCONF_NUM;i++) {
-		if (&m_mc_confs[i].conf == conf) {
-			m_mc_confs[i].is_taken = false;
-			return;
-		}
-	}
+void mempools_free_mcconf(mc_configuration* conf)
+{
+    for (int i = 0; i < MEMPOOLS_MCCONF_NUM; i++)
+    {
+        if (&m_mc_confs[i].conf == conf)
+        {
+            m_mc_confs[i].is_taken = false;
+            return;
+        }
+    }
 }
 
-app_configuration *mempools_alloc_appconf(void) {
-	for (int i = 0;i < MEMPOOLS_APPCONF_NUM;i++) {
-		if (i > m_appconf_highest) {
-			m_appconf_highest = i;
-		}
-		if (!m_app_confs[i].is_taken) {
-			m_app_confs[i].is_taken = true;
-			return &m_app_confs[i].conf;
-		}
-	}
+app_configuration* mempools_alloc_appconf(void)
+{
+    for (int i = 0; i < MEMPOOLS_APPCONF_NUM; i++)
+    {
+        if (i > m_appconf_highest)
+        {
+            m_appconf_highest = i;
+        }
+        if (!m_app_confs[i].is_taken)
+        {
+            m_app_confs[i].is_taken = true;
+            return &m_app_confs[i].conf;
+        }
+    }
 
-	m_appconf_highest++;
+    m_appconf_highest++;
 
-	return 0;
+    return 0;
 }
 
-void mempools_free_appconf(app_configuration *conf) {
-	for (int i = 0;i < MEMPOOLS_APPCONF_NUM;i++) {
-		if (&m_app_confs[i].conf == conf) {
-			m_app_confs[i].is_taken = false;
-			return;
-		}
-	}
+void mempools_free_appconf(app_configuration* conf)
+{
+    for (int i = 0; i < MEMPOOLS_APPCONF_NUM; i++)
+    {
+        if (&m_app_confs[i].conf == conf)
+        {
+            m_app_confs[i].is_taken = false;
+            return;
+        }
+    }
 }
 
-int mempools_mcconf_highest(void) {
-	return m_mcconf_highest;
+int mempools_mcconf_highest(void)
+{
+    return m_mcconf_highest;
 }
 
-int mempools_appconf_highest(void) {
-	return m_appconf_highest;
+int mempools_appconf_highest(void)
+{
+    return m_appconf_highest;
 }
 
-int mempools_mcconf_allocated_num(void) {
-	int res = 0;
-	for (int i = 0;i < MEMPOOLS_MCCONF_NUM;i++) {
-		if (m_mc_confs[i].is_taken) {
-			res++;
-		}
-	}
-	return res;
+int mempools_mcconf_allocated_num(void)
+{
+    int res = 0;
+    for (int i = 0; i < MEMPOOLS_MCCONF_NUM; i++)
+    {
+        if (m_mc_confs[i].is_taken)
+        {
+            res++;
+        }
+    }
+    return res;
 }
 
-int mempools_appconf_allocated_num(void) {
-	int res = 0;
-	for (int i = 0;i < MEMPOOLS_APPCONF_NUM;i++) {
-		if (m_app_confs[i].is_taken) {
-			res++;
-		}
-	}
-	return res;
+int mempools_appconf_allocated_num(void)
+{
+    int res = 0;
+    for (int i = 0; i < MEMPOOLS_APPCONF_NUM; i++)
+    {
+        if (m_app_confs[i].is_taken)
+        {
+            res++;
+        }
+    }
+    return res;
 }
-
