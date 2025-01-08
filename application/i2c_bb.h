@@ -1,9 +1,9 @@
 /*
-	Copyright 2019 Benjamin Vedder	benjamin@vedder.se
+    Copyright 2019 Benjamin Vedder	benjamin@vedder.se
 
-	This file is part of the VESC firmware.
+    This file is part of the VESC firmware.
 
-	The VESC firmware is free software: you can redistribute it and/or modify
+    The VESC firmware is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
@@ -25,18 +25,20 @@
 #include "stdint.h"
 #include "stdbool.h"
 
-typedef struct {
-	stm32_gpio_t *sda_gpio;
-	int sda_pin;
-	stm32_gpio_t *scl_gpio;
-	int scl_pin;
-	bool has_started;
-	bool has_error;
-	mutex_t mutex;
+typedef struct
+{
+    stm32_gpio_t* sda_gpio;
+    int sda_pin;
+    stm32_gpio_t* scl_gpio;
+    int scl_pin;
+    bool has_started;
+    bool has_error;
+    mutex_t mutex;
 } i2c_bb_state;
 
-void i2c_bb_init(i2c_bb_state *s);
-void i2c_bb_restore_bus(i2c_bb_state *s);
-bool i2c_bb_tx_rx(i2c_bb_state *s, uint16_t addr, uint8_t *txbuf, size_t txbytes, uint8_t *rxbuf, size_t rxbytes);
+void i2c_bb_init(i2c_bb_state* s);
+void i2c_bb_restore_bus(i2c_bb_state* s);
+bool i2c_bb_tx_rx(i2c_bb_state* s, uint16_t addr, uint8_t* txbuf, size_t txbytes, uint8_t* rxbuf,
+                  size_t rxbytes);
 
 #endif /* I2C_BB_H_ */

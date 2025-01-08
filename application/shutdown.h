@@ -1,9 +1,9 @@
 /*
-	Copyright 2019 Benjamin Vedder	benjamin@vedder.se
+    Copyright 2019 Benjamin Vedder	benjamin@vedder.se
 
-	This file is part of the VESC firmware.
+    This file is part of the VESC firmware.
 
-	The VESC firmware is free software: you can redistribute it and/or modify
+    The VESC firmware is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
@@ -25,12 +25,12 @@
 #include "conf_general.h"
 
 #ifdef HW_SHUTDOWN_HOLD_ON
-#define SHUTDOWN_RESET()					shutdown_reset_timer()
-#define SHUTDOWN_BUTTON_PRESSED				shutdown_button_pressed()
-#define SHUTDOWN_SET_SAMPLING_DISABLED(d)	shutdown_set_sampling_disabled(d)
+#define SHUTDOWN_RESET() shutdown_reset_timer()
+#define SHUTDOWN_BUTTON_PRESSED shutdown_button_pressed()
+#define SHUTDOWN_SET_SAMPLING_DISABLED(d) shutdown_set_sampling_disabled(d)
 #else
 #define SHUTDOWN_RESET()
-#define SHUTDOWN_BUTTON_PRESSED				false
+#define SHUTDOWN_BUTTON_PRESSED false
 #define SHUTDOWN_SET_SAMPLING_DISABLED(d)
 #endif
 

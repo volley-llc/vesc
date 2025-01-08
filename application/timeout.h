@@ -1,9 +1,9 @@
 /*
-	Copyright 2016 Benjamin Vedder	benjamin@vedder.se
+    Copyright 2016 Benjamin Vedder	benjamin@vedder.se
 
-	This file is part of the VESC firmware.
+    This file is part of the VESC firmware.
 
-	The VESC firmware is free software: you can redistribute it and/or modify
+    The VESC firmware is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
@@ -25,14 +25,15 @@
 #include "chsystypes.h"
 #include "datatypes.h"
 
-#define MAX_THREADS_MONITOR		10
-#define MIN_THREAD_ITERATIONS	1
+#define MAX_THREADS_MONITOR 10
+#define MIN_THREAD_ITERATIONS 1
 
-typedef enum {
-	THREAD_MCPWM = 0,
-	THREAD_CANBUS,
-	THREAD_USB,
-	THREAD_APP
+typedef enum
+{
+    THREAD_MCPWM = 0,
+    THREAD_CANBUS,
+    THREAD_USB,
+    THREAD_APP
 } WWDT_THREAD_TYPES;
 
 // Functions
