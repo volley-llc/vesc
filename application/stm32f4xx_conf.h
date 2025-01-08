@@ -1,7 +1,7 @@
 #ifndef __STM32F4xx_CONF_H
 #define __STM32F4xx_CONF_H
 
-#define USE_RTOS	0
+#define USE_RTOS 0
 
 #include "misc.h"
 #include "stm32f4_gpio_af.h"
