@@ -109,6 +109,15 @@ static THD_FUNCTION(led_thread, arg)
 
     chRegSetThreadName("Main LED");
 
+    // flash LED for 2 seconds at startup
+    for (int n = 0; n < 5; n++)
+    {
+        ledpwm_set_intensity(LED_GREEN, 1.0);
+        chThdSleepMilliseconds(200);
+        ledpwm_set_intensity(LED_GREEN, 0.0);
+        chThdSleepMilliseconds(200);
+    }
+
     for (;;)
     {
         mc_state state1 = mc_interface_get_state();
