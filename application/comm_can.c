@@ -69,6 +69,7 @@ static thread_t* ping_tp = 0;
 static volatile HW_TYPE ping_hw_last = HW_TYPE_VESC;
 static volatile int ping_hw_last_id = -1;
 static volatile bool init_done = false;
+static uint16_t tick_count = 0;
 #endif
 
 // Variables
@@ -1268,7 +1269,9 @@ void comm_can_send_status5(uint8_t id, bool replace)
     buffer_append_int32(buffer, mc_interface_get_tachometer_value(false), &send_index);
     buffer_append_int16(buffer, (int16_t)(mc_interface_get_input_voltage_filtered() * 1e1),
                         &send_index);
-    buffer_append_int16(buffer, 0, &send_index); // Reserved for now
+    // Tick count incremented each time this message is sent. Initialized to zero.
+    // Allows controller on CAN bus to detect when a VESC has rebooted.
+    buffer_append_int16(buffer, tick_count++, &send_index);
     comm_can_transmit_eid_replace(id | ((uint32_t)CAN_PACKET_STATUS_5 << 8), buffer, send_index,
                                   replace);
 }
