@@ -39,6 +39,11 @@
 #include "shutdown.h"
 #include "bms.h"
 
+// Dual motors are not support in Volley version
+#ifdef HW_HAS_DUAL_MOTORS
+#error "HW_HAS_DUAL_MOTORS is not support in Volley fork"
+#endif
+
 // Settings
 #define RX_FRAMES_SIZE 100
 #define RX_BUFFER_SIZE PACKET_MAX_PL_LEN
@@ -1469,8 +1474,44 @@ static THD_FUNCTION(cancom_status_internal_thread, arg)
 }
 #endif
 
+// return true if the specified status message level should be
+// sent based on the configured status levels.
+static bool status_selected(CAN_STATUS_MODE config_level, int level)
+{
+    switch (level)
+    {
+    case 1:
+        return config_level == CAN_STATUS_1 || config_level == CAN_STATUS_1_2 ||
+               config_level == CAN_STATUS_1_2_3 || config_level == CAN_STATUS_1_2_3_4 ||
+               config_level == CAN_STATUS_1_2_3_4_5;
+    case 2:
+        return config_level == CAN_STATUS_1_2 || config_level == CAN_STATUS_1_2_3 ||
+               config_level == CAN_STATUS_1_2_3_4 || config_level == CAN_STATUS_1_2_3_4_5;
+    case 3:
+        return config_level == CAN_STATUS_1_2_3 || config_level == CAN_STATUS_1_2_3_4 ||
+               config_level == CAN_STATUS_1_2_3_4_5;
+    case 4:
+        return config_level == CAN_STATUS_1_2_3_4 || config_level == CAN_STATUS_1_2_3_4_5;
+    case 5:
+        return config_level == CAN_STATUS_1_2_3_4_5;
+    }
+    return false;
+}
+
+/*
+    Volley change
+
+        Send Status 1 at twice configured rate because it contains
+        RPM and current, which are useful for Motion to track
+        ball launch events.
+
+        Send Status 2-5 at configured rate.
+*/
 static THD_FUNCTION(cancom_status_thread, arg)
 {
+    // when false, just sent status 1 which contains RPM
+    bool full_status = true;
+
     (void)arg;
     chRegSetThreadName("CAN status");
 
@@ -1480,77 +1521,59 @@ static THD_FUNCTION(cancom_status_thread, arg)
 
         if (conf->can_mode == CAN_MODE_VESC)
         {
-            if (conf->send_can_status == CAN_STATUS_1 || conf->send_can_status == CAN_STATUS_1_2 ||
-                conf->send_can_status == CAN_STATUS_1_2_3 ||
-                conf->send_can_status == CAN_STATUS_1_2_3_4 ||
-                conf->send_can_status == CAN_STATUS_1_2_3_4_5)
+            // ping-pong between all status messages and just the first one
+            if (full_status)
             {
-                mc_interface_select_motor_thread(1);
-                comm_can_send_status1(conf->controller_id, false);
-#ifdef HW_HAS_DUAL_MOTORS
-                mc_interface_select_motor_thread(2);
-                comm_can_send_status1(utils_second_motor_id(), false);
-#endif
-            }
+                if (status_selected(conf->send_can_status, 1))
+                {
+                    mc_interface_select_motor_thread(1);
+                    comm_can_send_status1(conf->controller_id, false);
+                }
 
-            if (conf->send_can_status == CAN_STATUS_1_2 ||
-                conf->send_can_status == CAN_STATUS_1_2_3 ||
-                conf->send_can_status == CAN_STATUS_1_2_3_4 ||
-                conf->send_can_status == CAN_STATUS_1_2_3_4_5)
-            {
-                mc_interface_select_motor_thread(1);
-                comm_can_send_status2(conf->controller_id, false);
-#ifdef HW_HAS_DUAL_MOTORS
-                mc_interface_select_motor_thread(2);
-                comm_can_send_status2(utils_second_motor_id(), false);
-#endif
-            }
+                if (status_selected(conf->send_can_status, 2))
+                {
+                    mc_interface_select_motor_thread(1);
+                    comm_can_send_status2(conf->controller_id, false);
+                }
 
-            if (conf->send_can_status == CAN_STATUS_1_2_3 ||
-                conf->send_can_status == CAN_STATUS_1_2_3_4 ||
-                conf->send_can_status == CAN_STATUS_1_2_3_4_5)
-            {
-                mc_interface_select_motor_thread(1);
-                comm_can_send_status3(conf->controller_id, false);
-#ifdef HW_HAS_DUAL_MOTORS
-                mc_interface_select_motor_thread(2);
-                comm_can_send_status3(utils_second_motor_id(), false);
-#endif
-            }
+                if (status_selected(conf->send_can_status, 3))
+                {
+                    mc_interface_select_motor_thread(1);
+                    comm_can_send_status3(conf->controller_id, false);
+                }
 
-            if (conf->send_can_status == CAN_STATUS_1_2_3_4 ||
-                conf->send_can_status == CAN_STATUS_1_2_3_4_5)
-            {
-                mc_interface_select_motor_thread(1);
-                comm_can_send_status4(conf->controller_id, false);
-#ifdef HW_HAS_DUAL_MOTORS
-                mc_interface_select_motor_thread(2);
-                comm_can_send_status4(utils_second_motor_id(), false);
-#endif
-            }
+                if (status_selected(conf->send_can_status, 4))
+                {
+                    mc_interface_select_motor_thread(1);
+                    comm_can_send_status4(conf->controller_id, false);
+                }
 
-            if (conf->send_can_status == CAN_STATUS_1_2_3_4_5)
+                if (status_selected(conf->send_can_status, 5))
+                {
+                    mc_interface_select_motor_thread(1);
+                    comm_can_send_status5(conf->controller_id, false);
+                }
+                full_status = false;
+            }
+            else
             {
-                mc_interface_select_motor_thread(1);
-                comm_can_send_status5(conf->controller_id, false);
-#ifdef HW_HAS_DUAL_MOTORS
-                mc_interface_select_motor_thread(2);
-                comm_can_send_status5(utils_second_motor_id(), false);
-#endif
+                if (status_selected(conf->send_can_status, 1))
+                {
+                    mc_interface_select_motor_thread(1);
+                    comm_can_send_status1(conf->controller_id, false);
+                }
+                full_status = true;
             }
         }
-
         while (conf->send_can_status_rate_hz == 0)
         {
             chThdSleepMilliseconds(10);
             conf = app_get_configuration();
         }
-
-        systime_t sleep_time = CH_CFG_ST_FREQUENCY / conf->send_can_status_rate_hz;
+        // HZ times two because we send status1 at twice the configured rate.
+        systime_t sleep_time = CH_CFG_ST_FREQUENCY / (conf->send_can_status_rate_hz * 2);
         if (sleep_time == 0)
-        {
             sleep_time = 1;
-        }
 
         chThdSleep(sleep_time);
     }
@@ -1575,24 +1598,8 @@ static void decode_msg(uint32_t eid, uint8_t* data8, int len, bool is_replaced)
 
     int id1 = app_get_configuration()->controller_id;
 
-#ifdef HW_HAS_DUAL_MOTORS
-    int motor_last = mc_interface_get_motor_thread();
-    int id2 = utils_second_motor_id();
-    if (id == id2)
-    {
-        mc_interface_select_motor_thread(2);
-    }
-    else
-    {
-        mc_interface_select_motor_thread(1);
-    }
-#else
-    int id2 = id1;
-#endif
-
     // The packets here are addressed to this VESC or to all VESCs (id=255)
-
-    if (id == 255 || id == id1 || id == id2)
+    if (id == 255 || id == id1)
     {
         switch (cmd)
         {
