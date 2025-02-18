@@ -721,6 +721,8 @@
 
 // Functions
 void hw_init_gpio(void);
+void hw_init_app_config(app_configuration*);
+void hw_init_mc_config(mc_configuration*);
 void hw_setup_adc_channels(void);
 void hw_start_i2c(void);
 void hw_stop_i2c(void);
