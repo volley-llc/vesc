@@ -108,6 +108,9 @@ static psw_status psw_stat[CAN_STATUS_MSGS_TO_STORE];
 static unsigned int detect_all_foc_res_index = 0;
 static int8_t detect_all_foc_res[50];
 
+// volley
+static uint16_t tick_count = 0;
+
 /*
  * 500KBaud, automatic wakeup, automatic recover
  * from abort mode.
@@ -1202,9 +1205,19 @@ void comm_can_send_status5(uint8_t id, bool replace) {
 	uint8_t buffer[8];
 	buffer_append_int32(buffer, mc_interface_get_tachometer_value(false), &send_index);
 	buffer_append_int16(buffer, (int16_t)(mc_interface_get_input_voltage_filtered() * 1e1), &send_index);
-	buffer_append_int16(buffer, 0, &send_index); // Reserved for now
-	comm_can_transmit_eid_replace(id | ((uint32_t)CAN_PACKET_STATUS_5 << 8),
-			buffer, send_index, replace, 0);
+    // Volley
+    // Tick count incremented each time this message is sent. Initialized to zero.
+    // Allows controller on CAN bus to detect when a VESC has rebooted.
+    buffer_append_int16(buffer, tick_count, &send_index);
+    comm_can_transmit_eid_replace(id | ((uint32_t)CAN_PACKET_STATUS_5 << 8),
+            buffer, send_index, replace, 0);
+    // if wrapping, don't roll-over to 0, instead roll over halfway in range. This
+    // will allow controller to differentiate between roll-over and a
+    // restart/reboot.
+    if (tick_count == 0xFFFF)
+        tick_count = 0x8000;
+    else
+        tick_count++;
 }
 
 void comm_can_send_status6(uint8_t id, bool replace) {
